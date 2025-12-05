@@ -1,0 +1,151 @@
+/*
+  While You Were Sleeping — Romantic Night Theme
+  Soft gradients, starry sky, subtle glow, and tender typography.
+*/
+
+:root {
+  /* Pink dream palette */
+  --bg-start: #2b0f1f;      /* deep plum (keeps contrast for stars) */
+  --bg-mid: #4a1430;        /* wine rose */
+  --bg-end: #7a1e4c;        /* rich magenta */
+  --accent: #ff8ab3;        /* soft pink */
+  --accent-2: #ffc2dd;      /* blush */
+  --text: #fff7fb;
+  --muted: #ffe0ee;
+  --glow: 0 0 24px rgba(255, 138, 179, 0.45), 0 0 56px rgba(255, 194, 221, 0.28);
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
+  color: var(--text);
+  background: radial-gradient(1200px 800px at 70% 20%, rgba(255, 180, 210, 0.18), transparent 60%),
+              linear-gradient(130deg, var(--bg-start), var(--bg-mid) 50%, var(--bg-end));
+  overflow-x: hidden;
+}
+
+#sky {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+}
+
+#stars {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.gradient-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(1000px 700px at 20% 10%, rgba(255, 194, 221, 0.16), transparent 60%),
+              radial-gradient(900px 620px at 80% 80%, rgba(255, 138, 179, 0.14), transparent 65%);
+  pointer-events: none;
+  filter: saturate(115%) contrast(105%);
+}
+
+.container {
+  min-height: 100dvh;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: clamp(20px, 4vw, 48px);
+  display: grid;
+  place-content: center;
+  gap: 22px;
+  text-align: center;
+}
+
+.title {
+  margin: 0;
+  font-weight: 600;
+  font-size: clamp(34px, 6vw, 64px);
+  letter-spacing: 0.4px;
+  text-shadow: 0 2px 18px rgba(255, 255, 255, 0.08);
+  filter: drop-shadow(0 0 24px rgba(177, 140, 255, 0.18));
+}
+
+.subtitle {
+  margin: 0 auto;
+  max-width: 50ch;
+  font-weight: 300;
+  font-size: clamp(16px, 2.5vw, 20px);
+  line-height: 1.75;
+  color: var(--muted);
+  text-shadow: 0 0 12px rgba(255, 170, 200, 0.18);
+}
+
+.btn {
+  --btn-bg: rgba(255, 255, 255, 0.06);
+  --btn-border: rgba(255, 255, 255, 0.18);
+  padding: 14px 14px; /* shorter length */
+  margin-top: 6px;
+  font-size: 16px;
+  color: var(--text);
+  background: var(--btn-bg);
+  border: 1px solid var(--btn-border);
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  cursor: pointer;
+  transition: transform 180ms ease, background 240ms ease, border-color 240ms ease, box-shadow 240ms ease;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(255,255,255,0.04);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.10);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: var(--glow);
+}
+
+.btn:active {
+  transform: translateY(0);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.hidden-message {
+  margin: 4px auto 0;
+  max-width: 36ch;
+  padding: 18px 20px;
+  color: #fff3f8;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.04));
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.25), 0 0 60px rgba(255, 138, 179, 0.28);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+  transition: opacity 380ms ease, transform 420ms cubic-bezier(.2,.7,.2,1);
+}
+
+.hidden-message.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Fade-in on load */
+.fade-in { animation: fadeIn 900ms ease both; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Twinkle animation for star canvas glow overlay */
+.twinkle {
+  animation: twinkle 4s ease-in-out infinite;
+}
+@keyframes twinkle {
+  0%, 100% { filter: brightness(100%); }
+  50% { filter: brightness(115%); }
+}
+
+/* Responsive tweaks */
+@media (max-width: 480px) {
+  .subtitle { font-size: 15px; }
+  .hidden-message { padding: 16px 18px; }
+}

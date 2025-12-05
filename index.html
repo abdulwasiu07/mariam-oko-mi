@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b1026" />
+  <title>While You Were Sleeping…</title>
+  <meta name="description" content="A soft, romantic night-sky love note." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css" />
+  <style>
+    /* Inline additions for hero image and smaller title */
+    .hero { margin: 0 auto 8px; display: grid; place-items: center; }
+    .hero-image {
+      width: min(69vw, 421px);
+      height: auto;
+      display: block;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.25), 0 0 80px rgba(255, 138, 179, 0.35);
+      animation: floaty 5s ease-in-out infinite;
+    }
+    .title-small { font-size: clamp(22px, 4.5vw, 36px); font-weight: 500; }
+    .container { gap: 14px; padding: clamp(12px, 3vw, 28px); }
+    @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+    /* Button width reduction (~10%) */
+    .btn { transform: scaleX(0.9); }
+    .btn:hover { transform: translateY(-1px) scaleX(0.9); }
+    .btn:active { transform: translateY(0) scaleX(0.9); }
+
+    /* Music toggle button (top-right) */
+    .music-toggle {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 999px;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2), inset 0 0 0 1px rgba(255,255,255,0.05);
+      cursor: pointer;
+      z-index: 20;
+      transition: transform 180ms ease, box-shadow 240ms ease, background 240ms ease, border-color 240ms ease;
+    }
+    .music-toggle:hover { transform: translateY(-1px); box-shadow: var(--glow); background: rgba(255, 255, 255, 0.18); }
+    .music-toggle:active { transform: translateY(0); }
+    .music-toggle svg { width: 18px; height: 18px; display: block; }
+    /* swap icons based on state */
+    .music-toggle .icon-play { display: none; }
+    .music-toggle[data-state="paused"] .icon-play { display: block; }
+    .music-toggle[data-state="paused"] .icon-pause { display: none; }
+  </style>
+</head>
+<body>
+  <!-- Starry sky background -->
+  <div id="sky">
+    <canvas id="stars" aria-hidden="true"></canvas>
+    <div class="gradient-overlay" aria-hidden="true"></div>
+  </div>
+
+  <!-- Music toggle button -->
+  <button id="musicToggle" class="music-toggle" aria-label="Pause music" title="Pause music" data-state="playing">
+    <!-- Pause icon -->
+    <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect></svg>
+    <!-- Play icon -->
+    <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7-11-7z"></path></svg>
+  </button>
+
+  <!-- Content -->
+  <main class="container fade-in">
+    <figure class="hero" aria-label="Love illustration">
+      <img class="hero-image" src="./love.png" alt="Sleeping peacefully, wrapped in love" />
+    </figure>
+    <h1 class="title title-small">While You Were Sleeping…</h1>
+
+    <button id="revealBtn" class="btn" aria-expanded="false" aria-controls="message">Tap for a message</button>
+
+    <section id="message" class="hidden-message" hidden>
+      <p>
+        you fell asleep talking to me, but i left the call going for a few more minutes, to feel closer to you,i wished you snored for a reason, but i still enjoyed the silence so much, i love you my mariam ❤
+      </p>
+    </section>
+  </main>
+
+  <!-- Background music -->
+  <audio id="bgm" src="./music.mp3" loop autoplay muted></audio>
+
+  <script>
+    // Audio autoplay helper + play/pause toggle
+    (function(){
+      const a = document.getElementById('bgm');
+      const btn = document.getElementById('revealBtn');
+      const toggle = document.getElementById('musicToggle');
+      if(!a) return;
+
+      // Attempt autoplay (muted)
+      a.play().catch(()=>{});
+
+      function renderState(){
+        const playing = !a.paused && !a.muted;
+        toggle && toggle.setAttribute('data-state', playing ? 'playing' : 'paused');
+        toggle && toggle.setAttribute('aria-label', playing ? 'Pause music' : 'Play music');
+        toggle && toggle.setAttribute('title', playing ? 'Pause music' : 'Play music');
+      }
+
+      function enableSound(){
+        a.muted = false;
+        a.volume = 0.35;
+        a.play().catch(()=>{});
+        renderState();
+        window.removeEventListener('click', enableSound);
+        btn && btn.removeEventListener('click', enableSound);
+      }
+
+      // First user gesture unmutes
+      window.addEventListener('click', enableSound, { once: true });
+      btn && btn.addEventListener('click', enableSound, { once: true });
+
+      // Toggle via top-right button
+      if (toggle){
+        toggle.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (a.paused || a.muted) {
+            a.muted = false;
+            a.volume = 0.35;
+            a.play().catch(()=>{});
+          } else {
+            a.pause();
+          }
+          renderState();
+        });
+      }
+
+      // Initial paint
+      renderState();
+    })();
+  </script>
+  <script src="./script.js"></script>
+</body>
+</html>
